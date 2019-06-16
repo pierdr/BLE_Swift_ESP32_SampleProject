@@ -5,4 +5,4 @@ The embedded folder contains the Arduino code to be uploaded on a ESP32 compatib
 
 The sample project shows a bidirectional communication over bluetooth low energy. 
 
-
+![](blesample.gif)
