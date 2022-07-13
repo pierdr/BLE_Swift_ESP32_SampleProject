@@ -1,6 +1,6 @@
 import CoreBluetooth
 
-protocol SimpleBluetoothIODelegate: class {
+protocol SimpleBluetoothIODelegate: AnyObject {
     func simpleBluetoothIO(simpleBluetoothIO: SimpleBluetoothIO, didReceiveValue value: Int8)
 }
 
@@ -37,15 +37,16 @@ class SimpleBluetoothIO: NSObject {
 extension SimpleBluetoothIO: CBCentralManagerDelegate {
     func centralManager(_ central: CBCentralManager, didConnect peripheral: CBPeripheral) {
         peripheral.discoverServices(nil)
-        print("Connected! With \(peripheral.name)")
+        if let name = peripheral.name {
+            print("Connected! With \(name)")
+        }
     }
     
     func centralManager(_ central: CBCentralManager, didDiscover peripheral: CBPeripheral, advertisementData: [String : Any], rssi RSSI: NSNumber) {
         connectedPeripheral = peripheral
-        print("Discovered \(peripheral.name)")
-        if (peripheral.name != nil) {
-            if(((peripheral.name?.contains("BLE_DEVICE"))!))
-            {
+        if let name = peripheral.name {
+            print("Discovered \(name)")
+            if peripheral.name == "BLE_DEVICE" {
                 if let connectedPeripheral = connectedPeripheral {
                     connectedPeripheral.delegate = self
                     centralManager.connect(connectedPeripheral, options: nil)
@@ -58,7 +59,7 @@ extension SimpleBluetoothIO: CBCentralManagerDelegate {
     
     func centralManagerDidUpdateState(_ central: CBCentralManager) {
         if central.state == .poweredOn {
-            // centralManager.scanForPeripherals(withServices: [CBUUID(string: serviceUUID)], options: nil)
+//             centralManager.scanForPeripherals(withServices: [CBUUID(string: serviceUUID)], options: nil)
             centralManager.scanForPeripherals(withServices: nil, options: nil)
         }
     }
